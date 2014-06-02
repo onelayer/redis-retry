@@ -25,6 +25,7 @@ unavailable.
      "README.md",
      "Rakefile",
      "lib/redis/retry.rb",
+     "lib/redis/retry/version.rb",
      "test/test_redis_retry.rb"
   ]
   s.homepage = %q{http://github.com/mrduncan/redis-retry}
