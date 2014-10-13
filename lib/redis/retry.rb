@@ -27,7 +27,7 @@ class Redis
         begin
           # Dispatch the command to Redis
           return @redis.send(command, *args, &block)
-        rescue Errno::ECONNREFUSED
+        rescue Redis::BaseConnectionError
           try += 1
           sleep @wait
         end
