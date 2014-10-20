@@ -27,7 +27,7 @@ class Redis
         begin
           # Dispatch the command to Redis
           return @redis.send(command, *args, &block)
-        rescue Redis::CannotConnectError, Redis::TimoutError, Redis::ConnectionError
+        rescue Redis::CannotConnectError, Redis::TimeoutError, Redis::ConnectionError
           try += 1
           sleep @wait
         end
