@@ -1,6 +1,7 @@
 $:.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 require 'test/unit'
 require 'mocha'
+require 'mocha/test_unit'
 require 'redis'
 require 'redis/retry'
 
@@ -44,4 +45,19 @@ class TestRedisRetry < Test::Unit::TestCase
     assert @redis['foo']
     assert @redis['bar']
   end
+
+  def test_should_deal_with_cannot_connect_error
+    @r.stubs(:send).raises(Redis::CannotConnectError).then.returns(true)
+    assert @redis['foo']    
+  end
+
+  def test_should_deal_with_timeout_error
+    @r.stubs(:send).raises(Redis::TimeoutError).then.returns(true)
+    assert @redis['foo']    
+  end
+
+  def test_should_deal_with_connection_error
+    @r.stubs(:send).raises(Redis::ConnectionError).then.returns(true)
+    assert @redis['foo']    
+  end    
 end
