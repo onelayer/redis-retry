@@ -23,11 +23,11 @@ class Redis
 
     def method_missing(command, *args, &block)
       try = 1
-      while try <= @tries
+      while @tries == 0 || try <= @tries
         begin
           # Dispatch the command to Redis
           return @redis.send(command, *args, &block)
-        rescue Errno::ECONNREFUSED
+        rescue Redis::CannotConnectError, Redis::TimeoutError, Redis::ConnectionError
           try += 1
           sleep @wait
         end
