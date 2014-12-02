@@ -23,18 +23,26 @@ class Redis
 
     def method_missing(command, *args, &block)
       try = 1
+      exception = nil
       while @tries == 0 || try <= @tries
         begin
           # Dispatch the command to Redis
           return @redis.send(command, *args, &block)
-        rescue Redis::CannotConnectError, Redis::TimeoutError, Redis::ConnectionError
+        rescue Redis::CannotConnectError, Redis::TimeoutError, Redis::ConnectionError, Errno::ECONNREFUSED, Errno::ECONNRESET, Errno::EINVAL, Timeout::Error, SystemCallError => e
           try += 1
+          exception = e
           sleep @wait
         end
       end
 
       # Ran out of retries
-      raise Errno::ECONNREFUSED
+      raise exception
+    end
+
+    def respond_to?(method)
+      return true if super(method)
+
+      @redis.respond_to?(method)
     end
   end
 end
